@@ -3,7 +3,7 @@ package zed.rainxch.core.data.local.db.dao
 import zed.rainxch.core.data.local.db.entities.InstalledAppEntity
 import zed.rainxch.core.domain.model.account.github.GithubRelease
 import zed.rainxch.core.domain.utils.VersionMath
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 
 // Small DAO write helpers used by the repository, kept here so the repository file stays
 // within the architecture line limit.

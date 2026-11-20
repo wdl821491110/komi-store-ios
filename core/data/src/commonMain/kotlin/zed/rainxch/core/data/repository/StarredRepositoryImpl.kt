@@ -39,7 +39,6 @@ import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
-import kotlinx.datetime.Clock
 
 class StarredRepositoryImpl(
     private val starredRepoDao: StarredRepoDao,

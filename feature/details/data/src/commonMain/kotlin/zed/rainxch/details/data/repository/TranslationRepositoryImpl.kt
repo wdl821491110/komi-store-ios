@@ -19,7 +19,6 @@ import zed.rainxch.details.domain.model.TranslationResult
 import zed.rainxch.details.domain.repository.TranslationRepository
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
-import kotlinx.datetime.Clock
 
 class TranslationRepositoryImpl(
     private val localizationManager: LocalizationManager,

@@ -30,7 +30,7 @@ import zed.rainxch.core.domain.model.account.github.GithubDeviceStart
 import zed.rainxch.core.domain.model.account.github.GithubDeviceTokenSuccess
 import zed.rainxch.feature.auth.data.BuildKonfig
 import java.util.concurrent.TimeoutException
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 
 class AuthenticationRepositoryImpl(
     private val tokenStore: TokenStore,

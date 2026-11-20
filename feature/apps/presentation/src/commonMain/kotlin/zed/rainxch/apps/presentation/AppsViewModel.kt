@@ -75,7 +75,7 @@ import zed.rainxch.githubstore.core.presentation.res.*
 import java.io.File
 import kotlin.time.Duration.Companion.milliseconds
 import zed.rainxch.core.domain.system.DownloadStage as OrchestratorStage
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 
 class AppsViewModel(
     private val appsRepository: AppsRepository,

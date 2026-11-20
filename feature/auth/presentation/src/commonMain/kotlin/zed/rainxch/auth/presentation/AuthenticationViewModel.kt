@@ -35,7 +35,7 @@ import zed.rainxch.core.domain.logging.KomiStoreLogger
 import zed.rainxch.githubstore.core.presentation.res.*
 import java.net.URLEncoder
 import kotlin.time.Duration.Companion.milliseconds
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 
 class AuthenticationViewModel(
     private val authenticationRepository: AuthenticationRepository,

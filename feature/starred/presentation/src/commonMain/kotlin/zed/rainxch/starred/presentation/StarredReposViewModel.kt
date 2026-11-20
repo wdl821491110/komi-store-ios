@@ -30,7 +30,6 @@ import zed.rainxch.starred.presentation.model.StarredRepositoryUi
 import zed.rainxch.starred.presentation.model.StarredSortRule
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
-import kotlinx.datetime.Clock
 
 class StarredReposViewModel(
     private val userSessionRepository: UserSessionRepository,

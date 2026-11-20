@@ -102,7 +102,6 @@ import zed.rainxch.githubstore.core.presentation.res.*
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.ExperimentalTime
-import kotlinx.datetime.Clock
 
 @Composable
 fun DetailsRoot(

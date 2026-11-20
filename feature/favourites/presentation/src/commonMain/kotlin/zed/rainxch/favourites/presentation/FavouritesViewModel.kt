@@ -23,7 +23,6 @@ import zed.rainxch.favourites.presentation.mappers.toFavouriteRepositoryUi
 import zed.rainxch.favourites.presentation.model.FavouritesSortRule
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
-import kotlinx.datetime.Clock
 
 class FavouritesViewModel(
     private val favouritesRepository: FavouritesRepository,

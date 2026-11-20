@@ -40,7 +40,7 @@ import zed.rainxch.core.domain.utils.TrackedReleaseResolver
 import zed.rainxch.core.domain.utils.UpdateVerdict
 import zed.rainxch.core.domain.utils.VersionMath
 import kotlin.coroutines.cancellation.CancellationException
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 
 class InstalledAppsRepositoryImpl(
     private val database: AppDatabase,

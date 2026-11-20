@@ -53,7 +53,7 @@ import zed.rainxch.githubstore.core.presentation.res.external_import_search_erro
 import zed.rainxch.githubstore.core.presentation.res.external_import_undo_failed
 import zed.rainxch.githubstore.core.presentation.res.external_import_undo_linked
 import zed.rainxch.githubstore.core.presentation.res.external_import_undo_skipped
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 
 class ExternalImportViewModel(
     private val externalImportRepository: ExternalImportRepository,

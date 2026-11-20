@@ -14,7 +14,6 @@ import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
-import kotlinx.datetime.Clock
 
 @OptIn(ExperimentalTime::class, ExperimentalUuidApi::class)
 internal class YoudaoTranslator(
