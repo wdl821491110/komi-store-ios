@@ -37,7 +37,7 @@ class TranslationRepositoryImpl(
         GoogleTranslator(httpClient = { httpClient }, json = json)
 
     private val cacheMutex = Mutex()
-    private val cache = LinkedHashMap<CacheKey, CachedTranslation>(MAX_CACHE_SIZE, 0.75f, true)
+    private val cache = LinkedHashMap<CacheKey, CachedTranslation>()
 
     @OptIn(ExperimentalTime::class)
     override suspend fun translate(
