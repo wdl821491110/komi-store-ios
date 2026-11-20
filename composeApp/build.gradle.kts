@@ -15,6 +15,10 @@ kotlin {
         iosTarget.binaries.framework {
             baseName = "ComposeApp"
             isStatic = true
+            // DevirtualizationAnalysis builds a huge constraint graph on large KMP/Compose
+            // projects and OOMs on GitHub's macOS runner. Skipping it (and its dependent
+            // Devirtualization phase) is safe; DCE and other optimizations still run.
+            freeCompilerArgs += "-Xdisable-phases=DevirtualizationAnalysis,Devirtualization"
         }
     }
 
