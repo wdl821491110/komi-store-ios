@@ -32,6 +32,7 @@ import kotlinx.datetime.format
 import kotlinx.datetime.format.char
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.getString
+import zed.rainxch.core.domain.isValidDownloadedFile
 import zed.rainxch.core.domain.helpers.BrowserHelper
 import zed.rainxch.core.domain.helpers.ShareManager
 import zed.rainxch.core.domain.logging.KomiStoreLogger
@@ -2112,8 +2113,7 @@ class DetailsViewModel(
         if (parkedAsset != assetName) return null
 
         return try {
-            val file = File(parkedPath)
-            if (file.exists() && file.length() > 0) parkedPath else null
+            if (isValidDownloadedFile(parkedPath)) parkedPath else null
         } catch (e: CancellationException) {
             throw e
         } catch (t: Throwable) {
@@ -2819,7 +2819,7 @@ class DetailsViewModel(
                         } catch (e: CancellationException) {
                             throw e
                         } catch (t: Throwable) {
-                            logger.error("Failed to load if repo is favourite: ${t.localizedMessage}")
+                            logger.error("Failed to load if repo is favourite: ${t.message}")
                             false
                         }
                     }
@@ -2833,7 +2833,7 @@ class DetailsViewModel(
                         } catch (e: CancellationException) {
                             throw e
                         } catch (t: Throwable) {
-                            logger.error("Failed to load if repo is starred: ${t.localizedMessage}")
+                            logger.error("Failed to load if repo is starred: ${t.message}")
                             false
                         }
                     }

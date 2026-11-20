@@ -8,6 +8,8 @@ expect fun getOsVersion(): String
 
 expect fun getSystemLocaleTag(): String
 
+expect fun isValidDownloadedFile(path: String): Boolean
+
 fun isAndroid(): Boolean = getPlatform() == Platform.ANDROID
 
 fun isDesktop(): Boolean = getPlatform().isDesktop

@@ -9,3 +9,6 @@ actual fun getPlatform(): Platform = Platform.ANDROID
 actual fun getOsVersion(): String = "${Build.VERSION.RELEASE} (API ${Build.VERSION.SDK_INT})"
 
 actual fun getSystemLocaleTag(): String = Locale.getDefault().toLanguageTag().takeIf { it.isNotBlank() } ?: "und"
+
+actual fun isValidDownloadedFile(path: String): Boolean =
+    java.io.File(path).let { it.exists() && it.length() > 0 }

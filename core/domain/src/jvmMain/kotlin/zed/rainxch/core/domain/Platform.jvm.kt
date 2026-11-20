@@ -14,3 +14,6 @@ actual fun getPlatform(): Platform =
 actual fun getOsVersion(): String = System.getProperty("os.version") ?: "unknown"
 
 actual fun getSystemLocaleTag(): String = Locale.getDefault().toLanguageTag().takeIf { it.isNotBlank() } ?: "und"
+
+actual fun isValidDownloadedFile(path: String): Boolean =
+    java.io.File(path).let { it.exists() && it.length() > 0 }

@@ -14,3 +14,7 @@ actual fun getOsVersion(): String = UIDevice.currentDevice.systemVersion
 
 actual fun getSystemLocaleTag(): String =
     NSLocale.currentLocale.localeIdentifier.takeIf { it.isNotBlank() } ?: "und"
+
+@OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+actual fun isValidDownloadedFile(path: String): Boolean =
+    platform.Foundation.NSFileManager.defaultManager.fileExistsAtPath(path)
