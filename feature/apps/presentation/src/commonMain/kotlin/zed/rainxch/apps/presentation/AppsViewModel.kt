@@ -75,6 +75,7 @@ import zed.rainxch.githubstore.core.presentation.res.*
 import java.io.File
 import kotlin.time.Duration.Companion.milliseconds
 import zed.rainxch.core.domain.system.DownloadStage as OrchestratorStage
+import kotlinx.datetime.Clock
 
 class AppsViewModel(
     private val appsRepository: AppsRepository,
@@ -292,7 +293,7 @@ class AppsViewModel(
     private fun refreshRatings(apps: List<InstalledApp>) {
         val targets = apps.associate { it.repoId to ReviewTarget(owner = it.repoOwner, name = it.repoName, host = it.sourceHost) }
         val wanted = targets.values.toSet()
-        val retryDue = ratingsFailedAt?.let { System.currentTimeMillis() - it > RATINGS_RETRY_MS } ?: false
+        val retryDue = ratingsFailedAt?.let { Clock.System.now().toEpochMilliseconds() - it > RATINGS_RETRY_MS } ?: false
         if (wanted == ratedTargets && !retryDue) return
         ratedTargets = wanted
         ratingsFailedAt = null
@@ -309,14 +310,14 @@ class AppsViewModel(
                             )
                         }
                         filterApps()
-                    }.onFailure { ratingsFailedAt = System.currentTimeMillis() }
+                    }.onFailure { ratingsFailedAt = Clock.System.now().toEpochMilliseconds() }
             }
     }
 
     private fun AppItem.withRating(rating: RepoRating?): AppItem = copy(ratingAverage = rating?.average, ratingCount = rating?.count ?: 0)
 
     private fun autoCheckForUpdatesIfNeeded() {
-        val now = System.currentTimeMillis()
+        val now = Clock.System.now().toEpochMilliseconds()
         val lastCheck = maxOf(lastAutoCheckTimestamp, oldestTrackedCheck())
         if (now - lastCheck < UPDATE_CHECK_COOLDOWN_MS) {
             logger.debug("Skipping auto-check: last check was ${(now - lastCheck) / 1000}s ago")
@@ -333,13 +334,13 @@ class AppsViewModel(
 
     private fun checkAllForUpdates() {
         viewModelScope.launch {
-            lastAutoCheckTimestamp = System.currentTimeMillis()
+            lastAutoCheckTimestamp = Clock.System.now().toEpochMilliseconds()
             _state.update { it.copy(isCheckingForUpdates = true) }
             try {
                 syncInstalledAppsUseCase()
                 installedAppsRepository.checkAllForUpdates()
                 _state.update {
-                    it.copy(lastCheckedTimestamp = System.currentTimeMillis())
+                    it.copy(lastCheckedTimestamp = Clock.System.now().toEpochMilliseconds())
                 }
             } catch (e: CancellationException) {
                 throw e
@@ -357,7 +358,7 @@ class AppsViewModel(
             try {
                 syncInstalledAppsUseCase()
                 installedAppsRepository.checkAllForUpdates()
-                val now = System.currentTimeMillis()
+                val now = Clock.System.now().toEpochMilliseconds()
                 lastAutoCheckTimestamp = now
                 _state.update { it.copy(lastCheckedTimestamp = now) }
             } catch (e: CancellationException) {
@@ -2428,7 +2429,7 @@ class AppsViewModel(
             _state.update { it.copy(isExporting = true) }
             try {
                 val json = appsRepository.exportApps()
-                val fileName = "github-store-apps-${System.currentTimeMillis()}.json"
+                val fileName = "github-store-apps-${Clock.System.now().toEpochMilliseconds()}.json"
                 shareManager.shareFile(fileName, json)
             } catch (e: CancellationException) {
                 throw e
@@ -2478,7 +2479,7 @@ class AppsViewModel(
             _state.update { it.copy(isExporting = true) }
             try {
                 val json = appsRepository.exportObtainium()
-                val fileName = "github-store-obtainium-${System.currentTimeMillis()}.json"
+                val fileName = "github-store-obtainium-${Clock.System.now().toEpochMilliseconds()}.json"
                 shareManager.shareFile(fileName, json)
             } catch (e: CancellationException) {
                 throw e

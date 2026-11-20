@@ -78,7 +78,7 @@ class MarkdownImageTransformer(
                 return@LaunchedEffect
             }
             val result =
-                withContext(Dispatchers.IO) {
+                withContext(Dispatchers.Default) {
                     probeOnce(normalizedLink)
                 }
             probeCache[normalizedLink] = result

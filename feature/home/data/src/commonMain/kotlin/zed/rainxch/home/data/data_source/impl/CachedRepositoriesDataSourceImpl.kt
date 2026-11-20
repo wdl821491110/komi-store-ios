@@ -30,6 +30,7 @@ import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
+import kotlinx.datetime.Clock
 
 @OptIn(ExperimentalTime::class)
 class CachedRepositoriesDataSourceImpl(
@@ -159,7 +160,7 @@ class CachedRepositoriesDataSourceImpl(
     private suspend fun fetchAllPlatformsFromBackend(
         categorySlug: String,
         category: HomeCategory,
-    ): CachedRepoResponse? = withContext(Dispatchers.IO) {
+    ): CachedRepoResponse? = withContext(Dispatchers.Default) {
         val platforms = listOf("android", "windows", "macos", "linux")
         val responses = coroutineScope {
             platforms.map { plat ->
@@ -231,7 +232,7 @@ class CachedRepositoriesDataSourceImpl(
 
     private suspend fun fetchAllPlatformsTopicFromBackend(
         topicSlug: String,
-    ): CachedRepoResponse? = withContext(Dispatchers.IO) {
+    ): CachedRepoResponse? = withContext(Dispatchers.Default) {
         val platforms = listOf("android", "windows", "macos", "linux")
         val responses = coroutineScope {
             platforms.map { plat ->
@@ -275,7 +276,7 @@ class CachedRepositoriesDataSourceImpl(
         category: HomeCategory,
         platform: DiscoveryPlatform,
         cacheKey: CacheKey,
-    ): CachedRepoResponse? = withContext(Dispatchers.IO) {
+    ): CachedRepoResponse? = withContext(Dispatchers.Default) {
         val paths = when (category) {
             HomeCategory.TRENDING -> listOf(
                 "cached-data/trending/android.json",
@@ -358,7 +359,7 @@ class CachedRepositoriesDataSourceImpl(
         topic: TopicCategory,
         platform: DiscoveryPlatform,
         topicCacheKey: TopicCacheKey,
-    ): CachedRepoResponse? = withContext(Dispatchers.IO) {
+    ): CachedRepoResponse? = withContext(Dispatchers.Default) {
         val topicFolder = topic.toApiSlug()
 
         val paths = listOf(

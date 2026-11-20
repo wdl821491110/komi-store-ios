@@ -41,6 +41,7 @@ import zed.rainxch.core.domain.system.RepoMatchSuggestion
 import zed.rainxch.core.domain.system.ScanResult
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Clock
+import kotlinx.datetime.Clock
 
 class ExternalImportRepositoryImpl(
     private val scanner: ExternalAppScanner,

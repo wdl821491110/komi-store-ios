@@ -96,7 +96,7 @@ import zed.rainxch.core.domain.use_cases.SyncInstalledAppsUseCase
 val coreModule =
     module {
         single {
-            CoroutineScope(Dispatchers.IO + SupervisorJob())
+            CoroutineScope(Dispatchers.Default + SupervisorJob())
         }
 
         single<KomiStoreLogger> {

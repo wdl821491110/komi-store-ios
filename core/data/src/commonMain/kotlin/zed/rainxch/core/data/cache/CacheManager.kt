@@ -12,6 +12,7 @@ import zed.rainxch.core.data.local.db.dao.CacheDao
 import zed.rainxch.core.data.local.db.entities.CacheEntryEntity
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
+import kotlinx.datetime.Clock
 
 class CacheManager(
     @PublishedApi internal val cacheDao: CacheDao,

@@ -56,7 +56,7 @@ class RepoPagesRepositoryImpl(
         state: IssueState,
         page: Int,
     ): Result<IssuesPage> =
-        withContext(Dispatchers.IO) {
+        withContext(Dispatchers.Default) {
             try {
                 val response =
                     httpClient.get("/repos/$owner/$repo/issues") {
@@ -89,7 +89,7 @@ class RepoPagesRepositoryImpl(
         repo: String,
         number: Int,
     ): Result<RepoIssueDetail> =
-        withContext(Dispatchers.IO) {
+        withContext(Dispatchers.Default) {
             try {
                 coroutineScope {
                     val issueDeferred =
@@ -149,7 +149,7 @@ class RepoPagesRepositoryImpl(
         owner: String,
         repo: String,
     ): Result<SecurityOverview> =
-        withContext(Dispatchers.IO) {
+        withContext(Dispatchers.Default) {
             try {
                 coroutineScope {
                     val advisoriesDeferred = async { fetchAdvisories(owner, repo) }
@@ -225,7 +225,7 @@ class RepoPagesRepositoryImpl(
         number: Int,
         body: String,
     ): Result<IssueComment> =
-        withContext(Dispatchers.IO) {
+        withContext(Dispatchers.Default) {
             try {
                 val response =
                     httpClient.post("/repos/$owner/$repo/issues/$number/comments") {
@@ -255,7 +255,7 @@ class RepoPagesRepositoryImpl(
         title: String,
         body: String,
     ): Result<Int> =
-        withContext(Dispatchers.IO) {
+        withContext(Dispatchers.Default) {
             try {
                 val response =
                     httpClient.post("/repos/$owner/$repo/issues") {
@@ -292,7 +292,7 @@ class RepoPagesRepositoryImpl(
     ): Result<Boolean> = postReaction("/repos/$owner/$repo/issues/comments/$commentId/reactions")
 
     private suspend fun postReaction(path: String): Result<Boolean> =
-        withContext(Dispatchers.IO) {
+        withContext(Dispatchers.Default) {
             try {
                 val response =
                     httpClient.post(path) {
@@ -319,7 +319,7 @@ class RepoPagesRepositoryImpl(
         state: IssueState,
         page: Int,
     ): Result<List<RepoPullRequest>> =
-        withContext(Dispatchers.IO) {
+        withContext(Dispatchers.Default) {
             try {
                 val response =
                     httpClient.get("/repos/$owner/$repo/pulls") {

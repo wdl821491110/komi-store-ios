@@ -7,6 +7,7 @@ import zed.rainxch.core.data.local.db.entities.SeenRepoEntity
 import zed.rainxch.core.domain.model.account.github.GithubRepoSummary
 import zed.rainxch.core.domain.model.repository.SeenRepo
 import zed.rainxch.core.domain.repository.SeenReposRepository
+import kotlinx.datetime.Clock
 
 class SeenReposRepositoryImpl(
     private val seenRepoDao: SeenRepoDao,
@@ -48,7 +49,7 @@ class SeenReposRepositoryImpl(
                 repoDescription = repoDescription,
                 primaryLanguage = primaryLanguage,
                 repoUrl = repoUrl,
-                seenAt = System.currentTimeMillis(),
+                seenAt = Clock.System.now().toEpochMilliseconds(),
             ),
         )
     }

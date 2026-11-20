@@ -25,6 +25,7 @@ import zed.rainxch.feed.domain.repository.FeedRepository
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
+import kotlinx.datetime.Clock
 
 @OptIn(ExperimentalTime::class)
 class FeedRepositoryImpl(
@@ -53,7 +54,7 @@ class FeedRepositoryImpl(
         page: Int,
         forceRefresh: Boolean,
     ): Result<FeedPage> =
-        withContext(Dispatchers.IO) {
+        withContext(Dispatchers.Default) {
             val slug = platform.toApiSlug()
             val token = slug ?: ALL_TOKEN
             val today = todayUtc()

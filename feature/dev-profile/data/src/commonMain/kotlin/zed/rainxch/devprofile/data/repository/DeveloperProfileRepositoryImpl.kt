@@ -49,7 +49,7 @@ class DeveloperProfileRepositoryImpl(
     private val httpClient: HttpClient get() = clientProvider.client
 
     override suspend fun getDeveloperProfile(username: String): Result<DeveloperProfile> {
-        return withContext(Dispatchers.IO) {
+        return withContext(Dispatchers.Default) {
             val backendResult = backendApiClient.getUser(username)
             backendResult.fold(
                 onSuccess = { return@withContext Result.success(it.toDeveloperProfile()) },
@@ -81,7 +81,7 @@ class DeveloperProfileRepositoryImpl(
     }
 
     override suspend fun getContributionCalendar(username: String): Result<ContributionCalendar> {
-        return withContext(Dispatchers.IO) {
+        return withContext(Dispatchers.Default) {
             try {
                 val response =
                     httpClient.get {
@@ -110,7 +110,7 @@ class DeveloperProfileRepositoryImpl(
     }
 
     override suspend fun getDeveloperRepositories(username: String): Result<List<DeveloperRepository>> {
-        return withContext(Dispatchers.IO) {
+        return withContext(Dispatchers.Default) {
             try {
                 val allRepos = mutableListOf<GitHubRepoResponse>()
                 var page = 1

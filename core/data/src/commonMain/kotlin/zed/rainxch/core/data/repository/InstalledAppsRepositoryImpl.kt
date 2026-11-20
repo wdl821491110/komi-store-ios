@@ -40,6 +40,7 @@ import zed.rainxch.core.domain.utils.TrackedReleaseResolver
 import zed.rainxch.core.domain.utils.UpdateVerdict
 import zed.rainxch.core.domain.utils.VersionMath
 import kotlin.coroutines.cancellation.CancellationException
+import kotlinx.datetime.Clock
 
 class InstalledAppsRepositoryImpl(
     private val database: AppDatabase,
@@ -204,7 +205,7 @@ class InstalledAppsRepositoryImpl(
                 throw e
             } catch (e: Exception) {
                 Logger.e { "Failed to check updates for $packageName: ${e.message}" }
-                installedAppsDao.updateLastChecked(packageName, System.currentTimeMillis())
+                installedAppsDao.updateLastChecked(packageName, Clock.System.now().toEpochMilliseconds())
                 return false
             }
         return checkAgainstWindow(app, releases, recordUnmatched)
@@ -334,7 +335,7 @@ class InstalledAppsRepositoryImpl(
                 assetId = primaryAsset.id,
                 assetDigest = primaryAsset.digest,
                 releaseNotes = matchedRelease.description ?: "",
-                timestamp = System.currentTimeMillis(),
+                timestamp = Clock.System.now().toEpochMilliseconds(),
                 latestVersionName = matchedRelease.tagName,
                 latestVersionCode = resolvedLatestVersionCode,
                 latestReleasePublishedAt = matchedRelease.publishedAt,
@@ -364,7 +365,7 @@ class InstalledAppsRepositoryImpl(
             throw e
         } catch (e: Exception) {
             Logger.e { "Failed to check updates for $packageName: ${e.message}" }
-            installedAppsDao.updateLastChecked(packageName, System.currentTimeMillis())
+            installedAppsDao.updateLastChecked(packageName, Clock.System.now().toEpochMilliseconds())
         }
 
         return false
@@ -438,7 +439,7 @@ class InstalledAppsRepositoryImpl(
                 repoName = app.repoName,
                 fromVersion = app.installedVersion,
                 toVersion = newTag,
-                updatedAt = System.currentTimeMillis(),
+                updatedAt = Clock.System.now().toEpochMilliseconds(),
                 updateSource = InstallSource.THIS_APP,
                 success = true,
             ),
@@ -459,7 +460,7 @@ class InstalledAppsRepositoryImpl(
                     versionCode = newVersionCode,
                     signingFingerprint = signingFingerprint,
                     isPending = isPendingInstall,
-                    at = System.currentTimeMillis(),
+                    at = Clock.System.now().toEpochMilliseconds(),
                 ).toEntity(),
         )
     }
@@ -541,7 +542,7 @@ class InstalledAppsRepositoryImpl(
                 }
             }
         } else {
-            installedAppsDao.clearUpdateMetadata(packageName, System.currentTimeMillis())
+            installedAppsDao.clearUpdateMetadata(packageName, Clock.System.now().toEpochMilliseconds())
         }
     }
 

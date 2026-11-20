@@ -29,6 +29,7 @@ import zed.rainxch.core.domain.model.account.UserProfile
 import zed.rainxch.core.domain.repository.UserSessionRepository
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
+import kotlinx.datetime.Clock
 
 @OptIn(ExperimentalTime::class)
 class UserSessionRepositoryImpl(
@@ -157,7 +158,7 @@ class UserSessionRepositoryImpl(
                 emit(null)
             }
         }
-    }.flowOn(Dispatchers.IO)
+    }.flowOn(Dispatchers.Default)
 
     override suspend fun notifySessionExpired(tokenKey: String?) {
         if (tokenKey.isNullOrEmpty()) return

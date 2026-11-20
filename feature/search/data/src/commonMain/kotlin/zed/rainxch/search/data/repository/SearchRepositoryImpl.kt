@@ -115,7 +115,7 @@ class SearchRepositoryImpl(
             }
 
             fallbackGithubSearch(query, platform, language, sortBy, sortOrder, page, cacheKey, privateMatches)
-        }.flowOn(Dispatchers.IO)
+        }.flowOn(Dispatchers.Default)
 
     private suspend fun isSignedIn(): Boolean =
         try {

@@ -140,7 +140,7 @@ class ProxyRepositoryImpl(
         migrationDeferred.await()
         // KSafe encrypt + disk writes are blocking; keep them off the caller's thread
         // (the save handler runs on the main dispatcher) so saving doesn't freeze the UI.
-        withContext(Dispatchers.IO) {
+        withContext(Dispatchers.Default) {
             val keys = keysFor(scope)
             when (config) {
                 is ProxyConfig.None -> {
@@ -196,7 +196,7 @@ class ProxyRepositoryImpl(
         writeMasterConfig(config)
     }
 
-    private suspend fun writeMasterConfig(config: ProxyConfig) = withContext(Dispatchers.IO) {
+    private suspend fun writeMasterConfig(config: ProxyConfig) = withContext(Dispatchers.Default) {
         when (config) {
             is ProxyConfig.None -> {
                 ksafe.safePut(MasterKeys.TYPE, "none")
@@ -236,7 +236,7 @@ class ProxyRepositoryImpl(
     }
 
     private suspend fun writeUseMaster(scope: ProxyScope, useMaster: Boolean) {
-        withContext(Dispatchers.IO) { ksafe.safePut(useMasterKeyFor(scope), useMaster) }
+        withContext(Dispatchers.Default) { ksafe.safePut(useMasterKeyFor(scope), useMaster) }
     }
 
     private suspend fun migrateIfNeeded() {

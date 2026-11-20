@@ -35,6 +35,7 @@ import zed.rainxch.core.domain.logging.KomiStoreLogger
 import zed.rainxch.githubstore.core.presentation.res.*
 import java.net.URLEncoder
 import kotlin.time.Duration.Companion.milliseconds
+import kotlinx.datetime.Clock
 
 class AuthenticationViewModel(
     private val authenticationRepository: AuthenticationRepository,
@@ -463,7 +464,7 @@ class AuthenticationViewModel(
         if (loginState !is AuthLoginState.DevicePrompt) return
         val deviceCode = loginState.start.deviceCode
 
-        val sinceLast = System.currentTimeMillis() - lastPollStartedAtMs
+        val sinceLast = Clock.System.now().toEpochMilliseconds() - lastPollStartedAtMs
         if (sinceLast < MIN_MANUAL_POLL_SPACING_MS) {
             logger.debug("Manual poll suppressed — only ${sinceLast}ms since last poll")
             return
@@ -479,7 +480,7 @@ class AuthenticationViewModel(
         viewModelScope.launch {
             try {
                 val flowStart =
-                    withContext(Dispatchers.IO) {
+                    withContext(Dispatchers.Default) {
                         authenticationRepository.startDeviceFlow()
                     }
 
@@ -556,19 +557,19 @@ class AuthenticationViewModel(
     }
 
     private fun pollOnce(deviceCode: String) {
-        lastPollStartedAtMs = System.currentTimeMillis()
+        lastPollStartedAtMs = Clock.System.now().toEpochMilliseconds()
         viewModelScope.launch {
             doPoll(deviceCode)
         }
     }
 
     private suspend fun doPoll(deviceCode: String) {
-        lastPollStartedAtMs = System.currentTimeMillis()
+        lastPollStartedAtMs = Clock.System.now().toEpochMilliseconds()
         _state.update { it.copy(isPolling = true) }
         try {
             logger.debug("Polling device token (code=${deviceCode.take(8)}..., interval=${pollingIntervalMs}ms, path=$authPath)")
             val outcome =
-                withContext(Dispatchers.IO) {
+                withContext(Dispatchers.Default) {
                     authenticationRepository.pollDeviceTokenOnce(deviceCode, authPath)
                 }
 
@@ -655,7 +656,7 @@ class AuthenticationViewModel(
         savedStateHandle[KEY_VERIFICATION_URI_COMPLETE] = startUi.verificationUriComplete
         savedStateHandle[KEY_INTERVAL_SEC] = startUi.intervalSec
         savedStateHandle[KEY_EXPIRES_IN_SEC] = startUi.expiresInSec
-        savedStateHandle[KEY_START_TIME_MILLIS] = System.currentTimeMillis()
+        savedStateHandle[KEY_START_TIME_MILLIS] = Clock.System.now().toEpochMilliseconds()
         savedStateHandle[KEY_AUTH_PATH] = path.name
     }
 
@@ -678,7 +679,7 @@ class AuthenticationViewModel(
                 return
             }
 
-        val elapsedSec = ((System.currentTimeMillis() - startTimeMillis) / 1000).toInt()
+        val elapsedSec = ((Clock.System.now().toEpochMilliseconds() - startTimeMillis) / 1000).toInt()
         val remainingSec = expiresInSec - elapsedSec
 
         if (remainingSec <= 0) {

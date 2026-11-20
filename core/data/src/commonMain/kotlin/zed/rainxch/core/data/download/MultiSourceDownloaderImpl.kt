@@ -54,5 +54,5 @@ class MultiSourceDownloaderImpl(
             downloader
                 .download(directUrl, suggestedFileName, bypassMirror = true, identity = identity)
                 .collect { send(it) }
-        }.flowOn(Dispatchers.IO)
+        }.flowOn(Dispatchers.Default)
 }

@@ -39,6 +39,7 @@ import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
+import kotlinx.datetime.Clock
 
 class StarredRepositoryImpl(
     private val starredRepoDao: StarredRepoDao,
@@ -66,7 +67,7 @@ class StarredRepositoryImpl(
         repo: String,
         starred: Boolean,
     ): Result<Unit> =
-        withContext(Dispatchers.IO) {
+        withContext(Dispatchers.Default) {
             try {
                 val response =
                     if (starred) {
@@ -101,7 +102,7 @@ class StarredRepositoryImpl(
     override suspend fun fetchStarredForUsername(
         username: String,
     ): Result<List<zed.rainxch.core.domain.model.repository.StarredRepository>> =
-        withContext(Dispatchers.IO) {
+        withContext(Dispatchers.Default) {
             try {
                 val sanitized = username.trim().trimStart('@')
                 if (sanitized.isEmpty()) {
@@ -196,7 +197,7 @@ class StarredRepositoryImpl(
     }
 
     override suspend fun syncStarredRepos(forceRefresh: Boolean): Result<Unit> =
-        withContext(Dispatchers.IO) {
+        withContext(Dispatchers.Default) {
             try {
                 if (!forceRefresh && !needsSync()) {
                     return@withContext Result.success(Unit)

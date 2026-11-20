@@ -39,7 +39,7 @@ class MainViewModel(
     val state = _state.asStateFlow()
 
     init {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.Default) {
             try {
                 userSessionRepository.primeSession()
             } catch (e: CancellationException) {
@@ -54,7 +54,7 @@ class MainViewModel(
             }
         }
 
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.Default) {
             userSessionRepository
                 .isUserLoggedIn()
                 .collect { isLoggedIn ->
@@ -164,7 +164,7 @@ class MainViewModel(
             }
         }
 
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.Default) {
             syncUseCase().onSuccess {
                 installedAppsRepository.checkAllForUpdates()
             }

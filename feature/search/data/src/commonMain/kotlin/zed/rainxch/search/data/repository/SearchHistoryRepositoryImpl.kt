@@ -6,6 +6,7 @@ import zed.rainxch.core.data.local.db.dao.SearchHistoryDao
 import zed.rainxch.core.data.local.db.entities.SearchHistoryEntity
 import zed.rainxch.domain.repository.SearchHistoryRepository
 import kotlin.time.Clock
+import kotlinx.datetime.Clock
 
 class SearchHistoryRepositoryImpl(
     private val searchHistoryDao: SearchHistoryDao,

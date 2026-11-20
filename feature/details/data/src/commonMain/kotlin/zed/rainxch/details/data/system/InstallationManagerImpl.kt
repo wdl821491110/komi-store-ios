@@ -20,6 +20,7 @@ import zed.rainxch.details.domain.model.UpdateInstalledAppParams
 import zed.rainxch.details.domain.system.InstallationManager
 import kotlin.time.Clock.System
 import kotlin.time.ExperimentalTime
+import kotlinx.datetime.Clock
 
 class InstallationManagerImpl(
     private val installer: Installer,

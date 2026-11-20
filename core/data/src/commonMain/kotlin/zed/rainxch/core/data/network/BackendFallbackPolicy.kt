@@ -4,6 +4,7 @@ import zed.rainxch.core.domain.model.error.RateLimitException
 import zed.rainxch.core.domain.model.error.RateLimitInfo
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Clock
+import kotlinx.datetime.Clock
 
 fun shouldFallbackToGithubOrRethrow(cause: Throwable): Boolean =
     when (cause) {

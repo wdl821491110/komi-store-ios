@@ -8,6 +8,7 @@ import zed.rainxch.core.domain.model.repository.DiscoveryPlatform
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.days
 import kotlin.time.ExperimentalTime
+import kotlinx.datetime.Clock
 
 fun BackendRepoResponse.toSummary(platform: DiscoveryPlatform = DiscoveryPlatform.All): GithubRepoSummary =
     GithubRepoSummary(

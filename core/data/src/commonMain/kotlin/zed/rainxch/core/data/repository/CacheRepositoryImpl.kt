@@ -18,7 +18,7 @@ class CacheRepositoryImpl(
         flow {
             val sizeBytes = fileLocationsProvider.getCacheSizeBytes()
             emit(sizeBytes)
-        }.flowOn(Dispatchers.IO)
+        }.flowOn(Dispatchers.Default)
 
     override suspend fun clearCache() {
         fileLocationsProvider.clearCacheFiles()

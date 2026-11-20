@@ -30,6 +30,7 @@ import zed.rainxch.core.domain.model.account.github.GithubDeviceStart
 import zed.rainxch.core.domain.model.account.github.GithubDeviceTokenSuccess
 import zed.rainxch.feature.auth.data.BuildKonfig
 import java.util.concurrent.TimeoutException
+import kotlinx.datetime.Clock
 
 class AuthenticationRepositoryImpl(
     private val tokenStore: TokenStore,
@@ -41,7 +42,7 @@ class AuthenticationRepositoryImpl(
         get() = tokenStore.tokenFlow().map { it?.accessToken }
 
     override suspend fun startDeviceFlow(): DeviceFlowStart =
-        withContext(Dispatchers.IO) {
+        withContext(Dispatchers.Default) {
             val clientId = BuildKonfig.GITHUB_CLIENT_ID
             require(clientId.isNotBlank()) {
                 "Missing GitHub CLIENT_ID. Add GITHUB_CLIENT_ID to local.properties."
@@ -91,10 +92,10 @@ class AuthenticationRepositoryImpl(
         }
 
     override suspend fun awaitDeviceToken(start: GithubDeviceStart): GithubDeviceTokenSuccess =
-        withContext(Dispatchers.IO) {
+        withContext(Dispatchers.Default) {
             val clientId = BuildKonfig.GITHUB_CLIENT_ID
             val timeoutMs = start.expiresInSec * 1000L
-            val startTime = System.currentTimeMillis()
+            val startTime = Clock.System.now().toEpochMilliseconds()
 
             val initialJitter = (0..2000).random().toLong()
             delay(initialJitter)
@@ -107,7 +108,7 @@ class AuthenticationRepositoryImpl(
             logger.debug("⏱️ Polling started. Timeout: ${start.expiresInSec}s, Interval: ${start.intervalSec}s")
 
             while (isActive) {
-                if (System.currentTimeMillis() - startTime >= timeoutMs) {
+                if (Clock.System.now().toEpochMilliseconds() - startTime >= timeoutMs) {
                     throw TimeoutException(
                         "Authentication timed out after ${start.expiresInSec} seconds. Please try again.",
                     )
@@ -269,7 +270,7 @@ class AuthenticationRepositoryImpl(
         deviceCode: String,
         path: AuthPath,
     ): PollOutcome =
-        withContext(Dispatchers.IO) {
+        withContext(Dispatchers.Default) {
             val clientId = BuildKonfig.GITHUB_CLIENT_ID
 
             val primaryResult =
@@ -333,7 +334,7 @@ class AuthenticationRepositoryImpl(
     }
 
     override suspend fun registerWebAuth(): Result<WebAuthRegistration> =
-        withContext(Dispatchers.IO) {
+        withContext(Dispatchers.Default) {
             val pkce = PkceGenerator.generate()
             try {
                 val authUrl =
@@ -351,7 +352,7 @@ class AuthenticationRepositoryImpl(
         }
 
     override suspend fun exchangeWebAuthHandoff(handoffId: String): Result<String> =
-        withContext(Dispatchers.IO) {
+        withContext(Dispatchers.Default) {
             try {
                 val accessToken = webAuthApi.consumeHandoff(handoffId)
                 val dto =
@@ -362,7 +363,7 @@ class AuthenticationRepositoryImpl(
                         scope = null,
                         refreshToken = null,
                         refreshTokenExpiresIn = null,
-                        savedAtEpochMillis = System.currentTimeMillis(),
+                        savedAtEpochMillis = Clock.System.now().toEpochMilliseconds(),
                     )
                 saveTokenWithVerification(dto.toDomain())
                 Result.success(accessToken)
@@ -374,7 +375,7 @@ class AuthenticationRepositoryImpl(
         }
 
     override suspend fun signInWithPat(token: String): Result<Unit> =
-        withContext(Dispatchers.IO) {
+        withContext(Dispatchers.Default) {
             val trimmed = token.trim()
 
             if (!looksLikePat(trimmed)) {
@@ -410,7 +411,7 @@ class AuthenticationRepositoryImpl(
                     scope = null,
                     refreshToken = null,
                     refreshTokenExpiresIn = null,
-                    savedAtEpochMillis = System.currentTimeMillis(),
+                    savedAtEpochMillis = Clock.System.now().toEpochMilliseconds(),
                 )
 
             try {

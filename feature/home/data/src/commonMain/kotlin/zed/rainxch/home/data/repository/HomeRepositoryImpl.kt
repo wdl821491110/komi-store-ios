@@ -46,6 +46,7 @@ import kotlin.time.Clock
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.ExperimentalTime
+import kotlinx.datetime.Clock
 
 class HomeRepositoryImpl(
     private val clientProvider: GitHubClientProvider,
@@ -171,7 +172,7 @@ class HomeRepositoryImpl(
                     category = "trending",
                 ),
             )
-        }.flowOn(Dispatchers.IO)
+        }.flowOn(Dispatchers.Default)
 
     @OptIn(ExperimentalTime::class)
     override fun getHotReleaseRepositories(
@@ -246,7 +247,7 @@ class HomeRepositoryImpl(
                     category = "hot_release",
                 ),
             )
-        }.flowOn(Dispatchers.IO)
+        }.flowOn(Dispatchers.Default)
 
     @OptIn(ExperimentalTime::class)
     override fun getMostPopular(
@@ -319,7 +320,7 @@ class HomeRepositoryImpl(
                     category = "most_popular",
                 ),
             )
-        }.flowOn(Dispatchers.IO)
+        }.flowOn(Dispatchers.Default)
 
     override fun getTopicRepositories(
         topic: zed.rainxch.home.domain.model.TopicCategory,
@@ -343,7 +344,7 @@ class HomeRepositoryImpl(
                     ),
                 )
             }
-        }.flowOn(Dispatchers.IO)
+        }.flowOn(Dispatchers.Default)
 
     override fun searchByTopic(
         searchKeywords: String,
@@ -376,7 +377,7 @@ class HomeRepositoryImpl(
                     category = cacheCategory,
                 ),
             )
-        }.flowOn(Dispatchers.IO)
+        }.flowOn(Dispatchers.Default)
 
     private fun searchReposWithInstallersFlow(
         platforms: Set<DiscoveryPlatform>,
@@ -539,7 +540,7 @@ class HomeRepositoryImpl(
                 )
                 logger.debug("Cached ${results.size} repos for $category page $startPage")
             }
-        }.flowOn(Dispatchers.IO)
+        }.flowOn(Dispatchers.Default)
 
     private fun buildSimplifiedQuery(
         baseQuery: String,

@@ -4,6 +4,7 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
+import kotlinx.datetime.Clock
 import zed.rainxch.core.domain.logging.KomiStoreLogger
 import zed.rainxch.core.domain.model.installation.BindingStatus
 import zed.rainxch.core.domain.model.installation.DeviceChange
@@ -34,7 +35,7 @@ class SyncInstalledAppsUseCase(
     }
 
     suspend operator fun invoke(): Result<Unit> =
-        withContext(Dispatchers.IO) {
+        withContext(Dispatchers.Default) {
             try {
                 val appsInDb = installedAppsRepository.getAllInstalledApps().first()
                 if (appsInDb.isEmpty()) return@withContext Result.success(Unit)
@@ -78,7 +79,7 @@ class SyncInstalledAppsUseCase(
 
     private suspend fun reconcileEnumerable(appsInDb: List<InstalledApp>) {
         val installedPackageNames = packageMonitor.getAllInstalledPackageNames()
-        val now = System.currentTimeMillis()
+        val now = Clock.System.now().toEpochMilliseconds()
 
         val deleteCandidates = mutableListOf<InstalledApp>()
         val staleCandidates = mutableListOf<InstalledApp>()
