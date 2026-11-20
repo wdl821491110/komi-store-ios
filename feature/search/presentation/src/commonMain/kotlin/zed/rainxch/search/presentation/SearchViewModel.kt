@@ -1,5 +1,7 @@
 package zed.rainxch.search.presentation
 
+import kotlin.concurrent.Volatile
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.collections.immutable.ImmutableList

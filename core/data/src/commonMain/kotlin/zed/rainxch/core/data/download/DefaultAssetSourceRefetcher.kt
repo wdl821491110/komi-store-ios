@@ -42,7 +42,7 @@ class DefaultAssetSourceRefetcher(
                     ?: return null
             } catch (e: CancellationException) {
                 throw e
-            } catch (e: java.io.IOException) {
+            } catch (e: io.ktor.utils.io.errors.IOException) {
                 logger.error(
                     "Asset refetch failed for ${spec.repoOwner}/${spec.repoName}: ${e.message}",
                 )

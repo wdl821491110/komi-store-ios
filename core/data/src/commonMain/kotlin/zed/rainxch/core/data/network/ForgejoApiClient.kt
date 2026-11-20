@@ -22,7 +22,7 @@ import zed.rainxch.core.data.dto.ReleaseNetwork
 import zed.rainxch.core.data.network.interceptor.HostTokenInterceptor
 import zed.rainxch.core.domain.model.settings.ProxyConfig
 import zed.rainxch.core.domain.repository.HostTokenRepository
-import java.io.IOException
+import io.ktor.utils.io.errors.IOException
 
 class ForgejoApiClient(
     host: String,

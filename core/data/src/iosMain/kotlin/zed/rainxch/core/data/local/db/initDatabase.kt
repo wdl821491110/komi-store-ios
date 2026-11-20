@@ -12,7 +12,7 @@ fun initDatabase(): AppDatabase {
         .databaseBuilder<AppDatabase>(
             name = IosAppDataPaths.filePath("github_store.db"),
         ).setDriver(BundledSQLiteDriver())
-        .setQueryCoroutineContext(Dispatchers.IO)
+        .setQueryCoroutineContext(Dispatchers.Default)
         .addMigrations(*MIGRATIONS)
         .fallbackToDestructiveMigrationOnDowngrade(dropAllTables = true)
         .build()

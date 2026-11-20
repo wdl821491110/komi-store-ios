@@ -1,9 +1,11 @@
 package zed.rainxch.core.data.services
 
+import kotlinx.cinterop.ExperimentalForeignApi
 import platform.Foundation.NSCachesDirectory
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSUserDomainMask
 
+@OptIn(ExperimentalForeignApi::class)
 class IosFileLocationsProvider : FileLocationsProvider {
     private val downloadsDir: String by lazy {
         val path =

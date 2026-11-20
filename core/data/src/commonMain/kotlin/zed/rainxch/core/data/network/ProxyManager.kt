@@ -1,5 +1,7 @@
 package zed.rainxch.core.data.network
 
+import kotlin.concurrent.Volatile
+
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,13 +19,13 @@ import zed.rainxch.core.domain.model.settings.ProxyConfig
 import zed.rainxch.core.domain.model.settings.ProxyScope
 import zed.rainxch.core.domain.repository.MirrorRepository
 import zed.rainxch.core.domain.repository.ProxyRepository
-import java.util.concurrent.atomic.AtomicReference
 
 object ProxyManager {
     private val flows: Map<ProxyScope, MutableStateFlow<ProxyConfig>> =
         ProxyScope.entries.associateWith { MutableStateFlow<ProxyConfig>(ProxyConfig.System) }
 
-    private val mirror = AtomicReference<MirrorActive?>(null)
+    @Volatile
+    private var mirror: MirrorActive? = null
     private var mirrorCollectorJob: Job? = null
 
     private val seedMutex = Mutex()
@@ -62,9 +64,9 @@ object ProxyManager {
         flows.getValue(scope).value = config
     }
 
-    fun currentMirror(): MirrorActive? = mirror.get()
+    fun currentMirror(): MirrorActive? = mirror
 
-    fun currentMirrorTemplate(): String? = mirror.get()?.template
+    fun currentMirrorTemplate(): String? = mirror?.template
 
     fun startMirrorCollector(
         repository: MirrorRepository,
@@ -100,7 +102,7 @@ object ProxyManager {
                         }
                     }
                 }.collect { active ->
-                    mirror.set(active)
+                    mirror = active
                 }
             }
     }

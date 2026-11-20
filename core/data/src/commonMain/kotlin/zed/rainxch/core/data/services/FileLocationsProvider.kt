@@ -11,3 +11,7 @@ interface FileLocationsProvider {
 
     fun clearCacheFiles(): Boolean
 }
+
+expect fun fileExists(path: String): Boolean
+
+expect fun deleteFileAt(path: String): Boolean

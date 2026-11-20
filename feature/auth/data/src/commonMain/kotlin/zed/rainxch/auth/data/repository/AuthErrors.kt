@@ -5,7 +5,7 @@ import io.ktor.client.network.sockets.SocketTimeoutException
 import io.ktor.client.plugins.HttpRequestTimeoutException
 import zed.rainxch.auth.data.network.BackendHttpException
 import zed.rainxch.auth.domain.repository.AuthException
-import java.io.IOException
+import io.ktor.utils.io.errors.IOException
 
 private const val HTTP_TOO_MANY_REQUESTS = 429
 private val HTTP_SERVER_ERRORS = 500..599

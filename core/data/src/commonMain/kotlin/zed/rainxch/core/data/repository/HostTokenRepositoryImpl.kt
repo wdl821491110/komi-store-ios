@@ -1,5 +1,7 @@
 package zed.rainxch.core.data.repository
 
+import kotlin.concurrent.Volatile
+
 import eu.anifantakis.lib.ksafe.KSafe
 import io.ktor.client.HttpClient
 import io.ktor.client.request.accept
@@ -27,7 +29,7 @@ import zed.rainxch.core.domain.model.account.HostToken
 import zed.rainxch.core.domain.model.account.TokenValidation
 import zed.rainxch.core.domain.model.error.TokenValidationException
 import zed.rainxch.core.domain.repository.HostTokenRepository
-import java.io.IOException
+import io.ktor.utils.io.errors.IOException
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Clock
 

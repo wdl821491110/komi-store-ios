@@ -17,7 +17,7 @@ class IosShareManager : ShareManager {
     override fun shareText(text: String) = present(items = listOf(text))
 
     override fun shareFile(fileName: String, content: String, mimeType: String) {
-        val data = NSString(string = content).dataUsingEncoding(NSUTF8StringEncoding) ?: return present(items = listOf(content))
+        val data = (content as NSString).dataUsingEncoding(NSUTF8StringEncoding) ?: return present(items = listOf(content))
         val url = writeTempFile(fileName, data) ?: return present(items = listOf(content))
         present(items = listOf(url))
     }
@@ -30,7 +30,6 @@ class IosShareManager : ShareManager {
         dispatch_async(dispatch_get_main_queue()) {
             val root = UIApplication.sharedApplication.keyWindow?.rootViewController ?: return@dispatch_async
             val activity = UIActivityViewController(activityItems = items, applicationActivities = null)
-            activity.popoverPresentationController?.sourceView = root.view
             root.presentViewController(activity, animated = true, completion = null)
         }
     }
@@ -38,6 +37,10 @@ class IosShareManager : ShareManager {
     private fun writeTempFile(fileName: String, data: NSData): NSURL? {
         val dir = platform.Foundation.NSTemporaryDirectory()
         val path = dir.trimEnd('/') + "/" + fileName
-        return if (data.writeToFile(path, atomically = true)) NSURL.fileURLWithPath(path) else null
+        return if (platform.Foundation.NSFileManager.defaultManager.createFileAtPath(path, contents = data, attributes = null)) {
+            NSURL.fileURLWithPath(path)
+        } else {
+            null
+        }
     }
 }

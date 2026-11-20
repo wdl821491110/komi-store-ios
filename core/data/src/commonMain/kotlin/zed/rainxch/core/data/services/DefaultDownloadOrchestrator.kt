@@ -1,5 +1,8 @@
 package zed.rainxch.core.data.services
 
+import zed.rainxch.core.data.services.deleteFileAt
+import zed.rainxch.core.data.services.fileExists
+
 import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -178,7 +181,7 @@ class DefaultDownloadOrchestrator(
 
     private fun OrchestratedDownload.lostItsFile(): Boolean =
         (stage == DownloadStage.AwaitingInstall || stage == DownloadStage.Installing) &&
-            filePath?.let { !java.io.File(it).exists() } == true
+            filePath?.let { !fileExists(it) } == true
 
     private suspend fun runDownload(spec: DownloadSpec) {
         while (true) {
@@ -317,7 +320,7 @@ class DefaultDownloadOrchestrator(
                     "Orchestrator: digest mismatch for ${spec.asset.name} ($mismatch); " +
                         "re-fetching from the source"
                 }
-                runCatching { java.io.File(filePath).delete() }
+                runCatching { deleteFileAt(filePath) }
                 runCatching { downloader.discardPartial(scopedName) }
                 updateEntry(spec.packageName) {
                     it.copy(progressPercent = 0, bytesDownloaded = 0L)
@@ -351,7 +354,7 @@ class DefaultDownloadOrchestrator(
                         "Orchestrator: digest still mismatched after the source re-fetch for " +
                             "${spec.asset.name}: $stillMismatched"
                     }
-                    runCatching { java.io.File(filePath).delete() }
+                    runCatching { deleteFileAt(filePath) }
                     markFailed(
                         spec.packageName,
                         "Checksum mismatch — file may have been tampered with",
@@ -778,10 +781,7 @@ class DefaultDownloadOrchestrator(
             if (entry.stage == DownloadStage.AwaitingInstall || entry.stage == DownloadStage.Failed) {
                 entry.filePath?.let { path ->
                     try {
-                        java.io
-                            .File(path)
-                            .takeIf { it.exists() }
-                            ?.delete()
+                        if (fileExists(path)) deleteFileAt(path) else false
                     } catch (e: Exception) {
                         Logger.w(e) { "Orchestrator: could not delete finished file $path" }
                     }

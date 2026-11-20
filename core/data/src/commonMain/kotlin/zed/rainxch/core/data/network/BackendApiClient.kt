@@ -1,5 +1,7 @@
 package zed.rainxch.core.data.network
 
+import kotlin.concurrent.Volatile
+
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.HttpTimeout

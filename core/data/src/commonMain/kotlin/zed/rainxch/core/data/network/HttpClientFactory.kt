@@ -20,7 +20,7 @@ import zed.rainxch.core.domain.model.settings.ProxyConfig
 import zed.rainxch.core.domain.repository.HostTokenRepository
 import zed.rainxch.core.domain.repository.RateLimitRepository
 import zed.rainxch.core.domain.repository.UserSessionRepository
-import java.io.IOException
+import io.ktor.utils.io.errors.IOException
 import kotlin.coroutines.cancellation.CancellationException
 
 expect fun createPlatformHttpClient(proxyConfig: ProxyConfig): HttpClient

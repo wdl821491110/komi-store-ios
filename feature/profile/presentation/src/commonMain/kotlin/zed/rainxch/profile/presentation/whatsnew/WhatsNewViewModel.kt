@@ -1,5 +1,7 @@
 package zed.rainxch.profile.presentation.whatsnew
 
+import kotlin.concurrent.Volatile
+
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CancellationException

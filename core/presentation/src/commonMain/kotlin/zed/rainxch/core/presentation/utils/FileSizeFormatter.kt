@@ -14,5 +14,20 @@ fun formatFileSize(
         index++
     }
 
-    return "%.${decimals}f ${units[index]}".format(size)
+    val factor = kotlin.math.pow(10.0, decimals.toDouble())
+    val rounded = kotlin.math.round(size * factor) / factor
+    val text =
+        if (decimals == 0) {
+            rounded.toLong().toString()
+        } else {
+            val raw = rounded.toString()
+            val dot = raw.indexOf('.')
+            if (dot < 0) {
+                raw
+            } else {
+                val needed = (dot + 1 + decimals).coerceAtMost(raw.length)
+                raw.substring(0, needed).trimEnd('0').trimEnd('.')
+            }
+        }
+    return "$text ${units[index]}"
 }

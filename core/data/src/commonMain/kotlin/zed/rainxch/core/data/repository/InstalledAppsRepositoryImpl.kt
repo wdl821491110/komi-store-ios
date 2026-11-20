@@ -1,5 +1,8 @@
 package zed.rainxch.core.data.repository
 
+import zed.rainxch.core.data.services.deleteFileAt
+import zed.rainxch.core.data.services.fileExists
+
 import androidx.room.immediateTransaction
 import androidx.room.useWriterConnection
 import co.touchlab.kermit.Logger
@@ -762,8 +765,7 @@ internal enum class ParkedFileDisposal {
 }
 
 internal fun tryDeleteParkedFile(path: String): ParkedFileDisposal {
-    val file = java.io.File(path)
-    val deleted = runCatching { file.delete() }.getOrDefault(false)
+    val deleted = deleteFileAt(path)
     if (deleted) return ParkedFileDisposal.Gone
-    return if (file.exists()) ParkedFileDisposal.Survived else ParkedFileDisposal.Gone
+    return if (fileExists(path)) ParkedFileDisposal.Survived else ParkedFileDisposal.Gone
 }
