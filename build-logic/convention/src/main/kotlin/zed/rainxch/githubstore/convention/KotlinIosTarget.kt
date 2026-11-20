@@ -1,0 +1,13 @@
+package zed.rainxch.githubstore.convention
+
+import org.gradle.api.Project
+import org.gradle.kotlin.dsl.configure
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+
+internal fun Project.configureIosTarget() {
+    extensions.configure<KotlinMultiplatformExtension> {
+        iosX64()
+        iosArm64()
+        iosSimulatorArm64()
+    }
+}

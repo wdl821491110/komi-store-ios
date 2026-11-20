@@ -1,0 +1,66 @@
+name: Build iOS IPA (unsigned)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ ios-port ]
+
+env:
+  JAVA_VERSION: '21'
+  JAVA_DISTRIBUTION: temurin
+  GRADLE_OPTS: -Dorg.gradle.daemon=false -Dorg.gradle.jvmargs=-Xmx4g
+
+jobs:
+  build-ios:
+    runs-on: macos-15
+    timeout-minutes: 90
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        with:
+          distribution: ${{ env.JAVA_DISTRIBUTION }}
+          java-version: ${{ env.JAVA_VERSION }}
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@3f5f9adaf7d9fecd50b5935e54106014257a94e6 # v6.4.0
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build Kotlin framework (iosArm64)
+        run: ./gradlew :composeApp:linkReleaseFrameworkIosArm64 --no-daemon --stacktrace
+
+      - name: Show framework output
+        run: ls -la composeApp/build/bin/iosArm64/releaseFramework/ || true
+
+      - name: Archive (unsigned)
+        working-directory: iosApp
+        run: |
+          xcodebuild -project iosApp.xcodeproj -scheme iosApp \
+            -configuration Release -sdk iphoneos \
+            -archivePath build/iosApp.xcarchive \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
+            IPHONEOS_DEPLOYMENT_TARGET=16.0 \
+            archive
+
+      - name: Package unsigned IPA manually
+        working-directory: iosApp
+        run: |
+          set -e
+          mkdir -p build/output Payload
+          cp -R build/iosApp.xcarchive/Products/Applications/iosApp.app Payload/
+          zip -q -r build/output/KomiStore-unsigned.ipa Payload
+          echo "IPA packaged at build/output/KomiStore-unsigned.ipa"
+
+      - name: List output
+        run: ls -la iosApp/build/output/
+
+      - name: Upload unsigned IPA
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: komi-store-ios-unsigned
+          path: iosApp/build/output/*.ipa
+          if-no-files-found: error
