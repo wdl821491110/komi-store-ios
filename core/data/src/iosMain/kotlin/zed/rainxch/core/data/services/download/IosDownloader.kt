@@ -65,12 +65,11 @@ class IosDownloader(
 
         val bytes: ByteArray = response.body()
         withContext(Dispatchers.Default) {
-            val nsData: NSData
-            if (bytes.isEmpty()) {
-                nsData = NSData()
+            val nsData: NSData = if (bytes.isEmpty()) {
+                NSData()
             } else {
                 bytes.usePinned { pinned ->
-                    nsData = NSData.create(bytes = pinned.addressOf(0), length = bytes.size.toULong())
+                    NSData.create(bytes = pinned.addressOf(0), length = bytes.size.toULong())
                 }
             }
             NSFileManager.defaultManager.createFileAtPath(path, contents = nsData, attributes = null)
