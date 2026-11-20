@@ -14,8 +14,9 @@ fun formatFileSize(
         index++
     }
 
-    val factor = kotlin.math.pow(10.0, decimals.toDouble())
-    val rounded = kotlin.math.round(size * factor) / factor
+    var factor = 1.0
+    repeat(decimals) { factor *= 10.0 }
+    val rounded = (size * factor + 0.5).toLong().toDouble() / factor
     val text =
         if (decimals == 0) {
             rounded.toLong().toString()

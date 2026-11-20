@@ -8,7 +8,9 @@ import io.ktor.client.request.header
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpHeaders
 import io.ktor.http.isSuccess
+import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.addressOf
 import kotlinx.cinterop.usePinned
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -17,7 +19,9 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import platform.Foundation.NSData
 import platform.Foundation.NSFileManager
+import platform.Foundation.create
 import zed.rainxch.core.data.data_source.TokenStore
 import zed.rainxch.core.data.services.FileLocationsProvider
 import zed.rainxch.core.domain.model.installation.DownloadProgress
@@ -25,7 +29,7 @@ import zed.rainxch.core.domain.network.AssetIdentity
 import zed.rainxch.core.domain.network.DigestVerifier
 import zed.rainxch.core.domain.network.Downloader
 
-@OptIn(ExperimentalForeignApi::class)
+@OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
 class IosDownloader(
     private val files: FileLocationsProvider,
     private val tokenStore: TokenStore,
@@ -61,10 +65,14 @@ class IosDownloader(
 
         val bytes: ByteArray = response.body()
         withContext(Dispatchers.Default) {
-            val nsData =
+            val nsData: NSData
+            if (bytes.isEmpty()) {
+                nsData = NSData()
+            } else {
                 bytes.usePinned { pinned ->
-                    platform.Foundation.NSData(bytes = pinned.addressOf(0), length = bytes.size.toULong())
+                    nsData = NSData.create(bytes = pinned.addressOf(0), length = bytes.size.toULong())
                 }
+            }
             NSFileManager.defaultManager.createFileAtPath(path, contents = nsData, attributes = null)
         }
         lock.withLock { cancelFlags.remove(fileName) }
