@@ -17,7 +17,7 @@ class IosShareManager : ShareManager {
     override fun shareText(text: String) = present(items = listOf(text))
 
     override fun shareFile(fileName: String, content: String, mimeType: String) {
-        val data = (content as NSString).dataUsingEncoding(NSUTF8StringEncoding) ?: return present(items = listOf(content))
+        val data = NSString(string = content).dataUsingEncoding(NSUTF8StringEncoding) ?: return present(items = listOf(content))
         val url = writeTempFile(fileName, data) ?: return present(items = listOf(content))
         present(items = listOf(url))
     }

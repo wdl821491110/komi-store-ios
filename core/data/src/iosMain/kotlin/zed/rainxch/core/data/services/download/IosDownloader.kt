@@ -9,6 +9,7 @@ import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpHeaders
 import io.ktor.http.isSuccess
 import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.refTo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -60,7 +61,7 @@ class IosDownloader(
 
         val bytes: ByteArray = response.body()
         withContext(Dispatchers.Default) {
-            val nsData = platform.Foundation.NSData(bytes = bytes, length = bytes.size.toULong())
+            val nsData = platform.Foundation.NSData.dataWithBytes(bytes.refTo(0), bytes.size.toULong())
             NSFileManager.defaultManager.createFileAtPath(path, contents = nsData, attributes = null)
         }
         lock.withLock { cancelFlags.remove(fileName) }
