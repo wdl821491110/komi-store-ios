@@ -15,6 +15,7 @@ kotlin {
 
                 implementation(libs.bundles.ktor.common)
                 implementation(libs.bundles.koin.common)
+                implementation(libs.kotlincrypto.sha2)
             }
         }
 

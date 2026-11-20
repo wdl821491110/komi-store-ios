@@ -125,8 +125,7 @@ import zed.rainxch.githubstore.core.presentation.res.update_package_mismatch
 import zed.rainxch.githubstore.core.presentation.res.variant_first_pin_toast
 import zed.rainxch.githubstore.core.presentation.res.variant_first_pin_toast_generic
 import zed.rainxch.githubstore.core.presentation.res.variant_unpinned_toast
-import java.io.File
-import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.concurrent.Volatile
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Clock.System
 import kotlin.time.ExperimentalTime
@@ -211,7 +210,8 @@ class DetailsViewModel(
     private val _events = Channel<DetailsEvent>(capacity = Channel.BUFFERED)
     val events = _events.receiveAsFlow()
 
-    private val rateLimited = AtomicBoolean(false)
+    @Volatile
+    private var rateLimited = false
 
     init {
         observeOrchestratorForDisplay()
@@ -2773,7 +2773,7 @@ class DetailsViewModel(
     private fun loadInitial() {
         viewModelScope.launch {
             try {
-                rateLimited.set(false)
+                rateLimited = false
 
                 _state.value = _state.value.copy(isLoading = true, errorMessage = null)
 
@@ -2814,7 +2814,7 @@ class DetailsViewModel(
                         try {
                             favouritesRepository.isFavoriteSync(repo.id)
                         } catch (_: RateLimitException) {
-                            rateLimited.set(true)
+                            rateLimited = true
                             null
                         } catch (e: CancellationException) {
                             throw e
@@ -2828,7 +2828,7 @@ class DetailsViewModel(
                         try {
                             starredRepository.isStarred(repo.id)
                         } catch (_: RateLimitException) {
-                            rateLimited.set(true)
+                            rateLimited = true
                             null
                         } catch (e: CancellationException) {
                             throw e
@@ -2873,7 +2873,7 @@ class DetailsViewModel(
                                 false,
                             )
                         } catch (_: RateLimitException) {
-                            rateLimited.set(true)
+                            rateLimited = true
                             Triple(emptyList<GithubRelease>(), true, false)
                         } catch (e: CancellationException) {
                             throw e
@@ -2892,7 +2892,7 @@ class DetailsViewModel(
                                 sourceHost = sourceHostParam,
                             )
                         } catch (_: RateLimitException) {
-                            rateLimited.set(true)
+                            rateLimited = true
                             null
                         } catch (e: CancellationException) {
                             throw e
@@ -2911,7 +2911,7 @@ class DetailsViewModel(
                                 sourceHost = sourceHostParam,
                             )
                         } catch (_: RateLimitException) {
-                            rateLimited.set(true)
+                            rateLimited = true
                             null
                         } catch (e: CancellationException) {
                             throw e
@@ -2926,7 +2926,7 @@ class DetailsViewModel(
                         try {
                             detailsRepository.getUserProfile(owner)
                         } catch (_: RateLimitException) {
-                            rateLimited.set(true)
+                            rateLimited = true
                             null
                         } catch (e: CancellationException) {
                             throw e
@@ -2956,7 +2956,7 @@ class DetailsViewModel(
                                 }
                             }
                         } catch (_: RateLimitException) {
-                            rateLimited.set(true)
+                            rateLimited = true
                             emptyList()
                         } catch (e: CancellationException) {
                             throw e
@@ -2980,7 +2980,7 @@ class DetailsViewModel(
                         ?.let { pkg -> allInstalledApps.firstOrNull { it.packageName == pkg } }
                         ?: pickPrimaryInstalledApp(allInstalledApps, null, emptyList())
 
-                if (rateLimited.get()) {
+                if (rateLimited) {
                     _state.value =
                         _state.value.copy(
                             isLoading = false,

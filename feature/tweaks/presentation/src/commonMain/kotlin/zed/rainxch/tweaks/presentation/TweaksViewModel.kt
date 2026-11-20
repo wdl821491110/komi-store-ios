@@ -176,8 +176,15 @@ class TweaksViewModel(
         return if (size == size.toLong().toDouble()) {
             "${size.toLong()} ${units[unitIndex]}"
         } else {
-            "${"%.1f".format(size)} ${units[unitIndex]}"
+            "${formatOneDecimal(size)} ${units[unitIndex]}"
         }
+    }
+
+    private fun formatOneDecimal(value: Double): String {
+        val rounded = (value * 10.0 + 0.5).toLong().toDouble() / 10.0
+        val whole = rounded.toLong()
+        val frac = ((rounded - whole) * 10.0).toLong()
+        return "$whole.$frac"
     }
 
     private fun loadVersionName() {

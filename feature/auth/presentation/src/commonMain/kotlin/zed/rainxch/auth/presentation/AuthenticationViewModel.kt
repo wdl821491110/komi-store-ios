@@ -33,7 +33,6 @@ import zed.rainxch.core.domain.helpers.BrowserHelper
 import zed.rainxch.core.domain.helpers.ClipboardHelper
 import zed.rainxch.core.domain.logging.KomiStoreLogger
 import zed.rainxch.githubstore.core.presentation.res.*
-import java.net.URLEncoder
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Clock
 
@@ -416,7 +415,7 @@ class AuthenticationViewModel(
             start = start,
             remainingSeconds = remainingSeconds,
             progressFraction = (remainingSeconds.toFloat() / total).coerceIn(0f, 1f),
-            formattedTimer = "%02d:%02d".format(minutes, seconds),
+            formattedTimer = "${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}",
             isUrgent = remainingSeconds in 1 until 60,
         )
     }
@@ -735,7 +734,7 @@ class AuthenticationViewModel(
         userCode: String,
     ): String {
         val separator = if ('?' in verificationUri) "&" else "?"
-        return verificationUri + separator + "user_code=" + URLEncoder.encode(userCode, "UTF-8")
+        return verificationUri + separator + "user_code=" + userCode.percentEncode()
     }
 
     private fun copyCode(start: GithubDeviceStartUi) {
@@ -812,5 +811,24 @@ class AuthenticationViewModel(
                 KEY_AUTH_PATH,
                 KEY_WEB_AUTH_STATE,
             )
+    }
+}
+
+
+private fun String.percentEncode(): String {
+    val hex = "0123456789ABCDEF"
+    return buildString {
+        for (byte in this@percentEncode.encodeToByteArray()) {
+            val v = byte.toInt() and 0xff
+            when {
+                (v in 0x41..0x5A) || (v in 0x61..0x7A) || (v in 0x30..0x39) ||
+                v == 0x2D || v == 0x5F || v == 0x2E || v == 0x7E -> append(v.toChar())
+                else -> {
+                    append('%')
+                    append(hex[v shr 4])
+                    append(hex[v and 0x0F])
+                }
+            }
+        }
     }
 }

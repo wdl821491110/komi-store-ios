@@ -74,7 +74,6 @@ import zed.rainxch.core.presentation.utils.TimeZoneChangeSignal
 import zed.rainxch.core.presentation.utils.formatFileSize
 import zed.rainxch.core.presentation.utils.toUserMessage
 import zed.rainxch.githubstore.core.presentation.res.*
-import java.io.File
 import kotlin.time.Duration.Companion.milliseconds
 import zed.rainxch.core.domain.system.DownloadStage as OrchestratorStage
 import kotlin.time.Clock
@@ -1317,7 +1316,6 @@ class AppsViewModel(
 
                     val existingPath = downloader.getDownloadedFilePath(latestAssetName)
                     if (existingPath != null) {
-                        val file = File(existingPath)
                         try {
                             val apkInfo =
                                 installer.getApkInfoExtractor().extractPackageInfo(existingPath)
@@ -1326,14 +1324,14 @@ class AppsViewModel(
                             val normalizedLatest =
                                 latestVersion.removePrefix("v").removePrefix("V")
                             if (normalizedExisting != normalizedLatest) {
-                                val deleted = file.delete()
+                                val deleted = zed.rainxch.core.data.services.deleteFileAt(existingPath)
                                 logger.debug("Deleted mismatched existing file ($normalizedExisting != $normalizedLatest): $deleted")
                             }
                         } catch (e: CancellationException) {
                             throw e
                         } catch (e: Exception) {
                             logger.debug("Failed to extract APK info for existing file: ${e.message}")
-                            val deleted = file.delete()
+                            val deleted = zed.rainxch.core.data.services.deleteFileAt(existingPath)
                             logger.debug("Deleted unextractable existing file: $deleted")
                         }
                     }
@@ -1851,7 +1849,7 @@ class AppsViewModel(
             logger.debug("Install already in progress for ${app.packageName}")
             return
         }
-        if (app.pendingInstallFilePath?.let { !File(it).exists() } == true) {
+        if (app.pendingInstallFilePath?.let { !zed.rainxch.core.data.services.fileExists(it) } == true) {
             logger.debug("Parked file for ${app.packageName} is gone, downloading it again")
             redownloadPendingApp(app)
             return
@@ -1963,7 +1961,7 @@ class AppsViewModel(
             }
 
             app.pendingInstallFilePath?.let { path ->
-                runCatching { File(path).takeIf { it.exists() }?.delete() }
+                runCatching { if (zed.rainxch.core.data.services.fileExists(path)) zed.rainxch.core.data.services.deleteFileAt(path) else false }
                     .onFailure {
                         logger.warn(
                             "discardPendingInstall: failed to delete parked file: ${it.message}",

@@ -29,8 +29,9 @@ import zed.rainxch.core.domain.logging.KomiStoreLogger
 import zed.rainxch.core.domain.model.account.github.GithubDeviceStart
 import zed.rainxch.core.domain.model.account.github.GithubDeviceTokenSuccess
 import zed.rainxch.feature.auth.data.BuildKonfig
-import java.util.concurrent.TimeoutException
 import kotlin.time.Clock
+
+private class AuthTimeoutException(message: String) : Exception(message)
 
 class AuthenticationRepositoryImpl(
     private val tokenStore: TokenStore,
@@ -109,7 +110,7 @@ class AuthenticationRepositoryImpl(
 
             while (isActive) {
                 if (Clock.System.now().toEpochMilliseconds() - startTime >= timeoutMs) {
-                    throw TimeoutException(
+                    throw AuthTimeoutException(
                         "Authentication timed out after ${start.expiresInSec} seconds. Please try again.",
                     )
                 }
@@ -218,7 +219,7 @@ class AuthenticationRepositoryImpl(
                     }
                 } catch (e: CancellationException) {
                     throw e
-                } catch (e: TimeoutException) {
+                } catch (e: AuthTimeoutException) {
                     throw e
                 } catch (e: Exception) {
                     consecutiveUnknownErrors++

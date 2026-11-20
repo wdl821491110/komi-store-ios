@@ -9,7 +9,7 @@ import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import zed.rainxch.details.domain.model.TranslationResult
-import java.security.MessageDigest
+import org.kotlincrypto.hash.sha2.SHA256
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 import kotlin.uuid.ExperimentalUuidApi
@@ -94,7 +94,7 @@ internal class YoudaoTranslator(
         }
 
     private fun sha256Hex(input: String): String {
-        val digest = MessageDigest.getInstance("SHA-256").digest(input.encodeToByteArray())
+        val digest = SHA256().digest(input.encodeToByteArray())
         return buildString(digest.size * 2) {
             for (byte in digest) {
                 val v = byte.toInt() and 0xff

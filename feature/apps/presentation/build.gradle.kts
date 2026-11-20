@@ -11,6 +11,7 @@ kotlin {
                 implementation(libs.kotlinx.datetime)
 
                 implementation(projects.core.domain)
+                implementation(projects.core.data)
                 implementation(projects.core.presentation)
                 implementation(projects.feature.apps.domain)
 

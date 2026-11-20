@@ -15,3 +15,5 @@ interface FileLocationsProvider {
 expect fun fileExists(path: String): Boolean
 
 expect fun deleteFileAt(path: String): Boolean
+
+expect fun readFileBytes(path: String): ByteArray
