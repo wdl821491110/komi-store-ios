@@ -15,10 +15,14 @@ kotlin {
         iosTarget.binaries.framework {
             baseName = "ComposeApp"
             isStatic = true
-            // DevirtualizationAnalysis builds a huge constraint graph on large KMP/Compose
-            // projects and OOMs on GitHub's macOS runner. Skipping it (and its dependent
-            // Devirtualization phase) is safe; DCE and other optimizations still run.
-            freeCompilerArgs += "-Xdisable-phases=DevirtualizationAnalysis,Devirtualization"
+            // These LTO phases build huge whole-program graphs (call graph / constraint
+            // graph) that OOM on GitHub's 7GB macos-latest runner. All are optional
+            // optimizations: skipping them is functionally safe (binary is slightly larger).
+            // NOTE: never disable BuildDFG - other phases read its symbol table and crash.
+            freeCompilerArgs += listOf(
+                "-Xadd-light-debug=disable",
+                "-Xdisable-phases=DevirtualizationAnalysis,Devirtualization,RemoveRedundantCallsToStaticInitializersPhase",
+            )
         }
     }
 
